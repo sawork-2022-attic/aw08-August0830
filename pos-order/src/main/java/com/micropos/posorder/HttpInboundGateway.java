@@ -14,6 +14,29 @@ public class HttpInboundGateway {
 
     public static final Logger log = LoggerFactory.getLogger(HttpInboundGateway.class);
 
+    @Bean
+    public IntegrationFlow inGate(){
+        log.info("inGate\n");
+        // return IntegrationFlows.from(Http.inboundGateway("/order"))
+        //         .headerFilter("accept-encoding", false)
+        //         .channel("sendOrderChannel")
+        //         .get();
+        return IntegrationFlows.from(
+                Http.inboundGateway("/order")
+                        .requestMapping(r -> r.methods(HttpMethod.POST)
+                                .consumes("text/plain")//application/json
+                                )
+                        
+                        .requestPayloadType(String.class)
+                        .id("deliveryInfo")
+                        )
+                        .headerFilter("accept-encoding", false)
+                .channel("sendOrderChannel")
+                .<String>handle((s)->generateOrder((String) s.getPayload()))
+                .get();
+        
+    }
+
     public String generateOrder(String orderInfo)
     {
         String[] info = orderInfo.split("\\|");
@@ -21,27 +44,15 @@ public class HttpInboundGateway {
         String addr = null;
         for(String str : info){
             if(str.startsWith("addr:")){
-                addr = new StringBuilder(str.substring(4)).toString();
+                addr = new StringBuilder(str.substring(5)).toString();
             }
             else
                 cnt++;
         }
-        String deliveryInfo = String.format("%d|%s",cnt,addr);
-        log.info("place order {}", deliveryInfo);
+        String deliveryInfo = String.format("orderInfo=%d|%s",cnt,addr);
+        log.info("{}", deliveryInfo);
         return deliveryInfo;
     }
 
-    @Bean
-    public IntegrationFlow inGate(){
-        return IntegrationFlows.from(
-                Http.inboundGateway("/order")
-                        .requestMapping(r -> r.methods(HttpMethod.POST)
-                                .consumes("text/plain"))
-                        .requestPayloadType(String.class)
-                        .id("deliveryInfo"))
-                .<String>handle((p,h) -> generateOrder(p))
-                .channel("sendOrderChannel")
-                .get();
-        
-    }
+    
 }

@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: pos-order
+  # cloud:
+  #   function:
+  #     definition: placeOrder
+  #   stream:
+  #     function:
+  #       bindings:
+  #         placeOrder-out-0: deliver-order
+  #     bindings:
+  #       deliver-order:
+  #         destination: output
+
+server:
+  port: 8085
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/

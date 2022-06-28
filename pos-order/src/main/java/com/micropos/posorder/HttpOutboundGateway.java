@@ -12,6 +12,7 @@ public class HttpOutboundGateway {
     @Bean
     public IntegrationFlow outGate()
     {
+        
         return IntegrationFlows.from("sendOrderChannel")
         .handle(
             Http.outboundGateway("http://localhost:8086/delivery/")
