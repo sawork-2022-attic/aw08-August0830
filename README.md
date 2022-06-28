@@ -18,3 +18,11 @@ Please implement delivery as an standalone service (just like the random joke se
 ![](Micropos.svg)
 
 Consider the advantage by doing so and write it down in your readme file.
+
+
+
+My opinions of the advantage by doing so:
+
+I can design the delivery service independently instead of considering order service like I did in AW07. In other words, I can use third-party delivery service as long as I make order service to fit the message protocol between them.
+
+I can choose diverse way for services to communicate. In this case I use Http Interface in Java Integration but I can improve the performance of my service with other message api like rabbitmq. So integration offers flexibility for developer to design the communication structure between service.
